@@ -61,14 +61,14 @@ const customer2 = {
 }
 
 const orderItem1 = {
-    orderItem: {'63cae859cc0486edeea504bf': 1},
-    customer_id: {'63cae99fd60efe1e3f71d363' : 1}, 
+    orderItem: pizza1,
+    customer_id: customer1, 
     delivery: true, 
 }
 
 const orderItem2 = {
-    orderItem: [{'63cae859cc0486edeea504bf': 1}, {'63cae935d974d77e8aebf528': 2}, {'63cae959296bac5dda8adcd8': 3}],
-    customer_id: {'63cae9a0d60efe1e3f71d364' : 1}, 
+    orderItem: [pizza1, pizza2, pizza3],
+    customer_id: customer2, 
     delivery: true, 
 }
 
@@ -85,6 +85,26 @@ const insertItem = async thisItem => {
     const result = await collection.insertOne(thisItem);
     console.log('Item Added:', thisItem);
 }
+
+
+/* CRUD: READ 
+*********************************** */
+
+const getListing = async (queryParam, queryLimit) => {
+    const result = await collection.find(queryParam).limit(queryLimit).toArray()
+    console.table(result); 
+}
+
+/* CRUD: UPDATE 
+*********************************** */
+
+const updateItem = async(thisId, fieldName, fieldValue) => {
+    const itemId    = {_id: new ObjectId(thisId) };
+    const itemQuery = { $set: {[fieldName]: fieldValue} };
+    const result    = await collection.findOneAndUpdate(itemId, itemQuery);
+    console.log('Item Updated: ', result);
+}
+
 /* CRUD: DELETE
 *********************************** */
 const deleteItem = async(thisId) => {
@@ -93,18 +113,10 @@ const deleteItem = async(thisId) => {
     console.log('Item Deleted:', itemId);
 }
 
-/* CRUD: READ 
-*********************************** */
-
-const getListing = async (customerId, queryLimit) => {
-    const cusId = {_id: new ObjectId(customerId)}
-    const result = await collection.find(cusId).limit(queryLimit).toArray()
-    console.table(result); 
-}
-
 //await insertItem(orderItem4);
 //await insertItem(orderItem2);
-//await deleteItem("63cae86ed250b11796c9af9c")
-await getListing('63cae9a0d60efe1e3f71d364', 0);
+await deleteItem("63caef0a960459545a3f74d6")
+//await updateItem('63caee0a3d2f3314a785d60f','orderItem', [pizza1, pizza2, pizza3])
+await getListing({}, 0);
 
 client.close();
